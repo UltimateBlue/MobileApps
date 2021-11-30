@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import './main.dart';
+import './StateFullBody.dart';
 import './transaction.dart';
 
 class EnterExp extends StatelessWidget {
   bool showInputPanel;
-  MyHomePageState parent;
+  final Function closePopup;
+  final Function(String title, String price) addNewEntry;
   final titleController = TextEditingController();
   final amountController = TextEditingController();
 
-  EnterExp(this.showInputPanel, this.parent);
+  EnterExp(this.showInputPanel, this.closePopup, this.addNewEntry);
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +38,8 @@ class EnterExp extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  parent.transactions.add(Transaction(
-                      'tr' + (parent.transactions.length + 1).toString(),
-                      titleController.text,
-                      double.parse(amountController.text),
-                      DateTime.now()));
-                  parent.closeAddExpPopup();
+                  addNewEntry(titleController.text, amountController.text);
+                  closePopup();
                   // clear textFields
                   // close panel
                   // update UI
