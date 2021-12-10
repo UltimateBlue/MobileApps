@@ -1,5 +1,5 @@
 // ignore_for_file: file_names
-
+/*
 import 'package:flutter/material.dart';
 import './transaction.dart';
 
@@ -20,15 +20,21 @@ class StateFullBodyState extends State<StateFullBody> {
   ];
   bool showInputPanel = false;
 
+  void showNewEntryPanel() {
+    if (showInputPanel) {
+      setState(() {});
+    }
+  }
+
   void closeAddExpPopup() {
     setState(() {
       showInputPanel = false;
     });
   }
 
-  void addNewEntry(String title, String price) {
+  void addNewEntry(String title, double price) {
     transactions.add(Transaction('tr' + (transactions.length + 1).toString(),
-        title, double.parse(price), DateTime.now()));
+        title, price, DateTime.now()));
   }
 
   @override
@@ -55,3 +61,4 @@ class StateFullBodyState extends State<StateFullBody> {
         ]);
   }
 }
+*/
