@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+
 import './transaction.dart';
 import './chartbars.dart';
 import './enter_new_exp.dart';
@@ -46,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //     'tr1', 'New Shoes', 19.5, DateTime.now().subtract(Duration(days: 4)))
   ];
   bool showInputPanel = false;
+  bool _showChart = false;
 
   void _removeItem(String id) {
     setState(() {
@@ -78,17 +80,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: const Text('Personal Expenses'),
+      backgroundColor: Theme.of(context).primaryColorDark,
+      foregroundColor: Colors.white,
+      actions: [
+        IconButton(
+            onPressed: () => {_startAddNewTransaction(context)},
+            icon: Icon(Icons.add))
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Personal Expenses'),
-        backgroundColor: Theme.of(context).primaryColorDark,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-              onPressed: () => {_startAddNewTransaction(context)},
-              icon: Icon(Icons.add))
-        ],
-      ),
+      appBar: appBar,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -101,25 +106,65 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _startAddNewTransaction(context);
+        },
+        tooltip: 'Add New Expense',
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ChartBar(transactions
-                .where((element) => element.date
-                    .isAfter(DateTime.now().subtract(Duration(days: 7))))
-                .toList()),
-            ExpList(transactions, _removeItem),
-            FloatingActionButton(
-              onPressed: () {
-                _startAddNewTransaction(context);
-              },
-              tooltip: 'Add New Expense',
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
-              child: const Icon(Icons.add),
-            ),
+            if (isLandscape)
+              Switch(
+                  value: _showChart,
+                  onChanged: (val) {
+                    setState(() {
+                      _showChart = val;
+                    });
+                  }),
+            if (!isLandscape)
+              Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.3,
+                child: ChartBar(transactions
+                    .where((element) => element.date
+                        .isAfter(DateTime.now().subtract(Duration(days: 7))))
+                    .toList()),
+              ),
+            if (!isLandscape)
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.7,
+                  child: ExpList(transactions, _removeItem)),
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.6,
+                      child: ChartBar(transactions
+                          .where((element) => element.date.isAfter(
+                              DateTime.now().subtract(Duration(days: 7))))
+                          .toList()),
+                    )
+                  : Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.75,
+                      child: ExpList(transactions, _removeItem)),
           ]),
     );
   }

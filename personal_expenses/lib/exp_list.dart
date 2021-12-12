@@ -9,52 +9,61 @@ class ExpList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // itemCount: _transactions.length;
+
     return _transactions.isEmpty
-        ? Column(
-            children: [
-              const Text("No Expenses yet!"),
-              Container(
-                margin: const EdgeInsets.all(10),
-                height: 100,
-                child: Image.asset('assets/images/s.jpg'),
-              ),
-            ],
-          )
-        : Flexible(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 5,
-                  child: Center(
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        radius: 50,
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: FittedBox(
-                            child: Text(
-                                '${_transactions[index].amount.toStringAsFixed(2)}\$'),
-                          ),
+        ? LayoutBuilder(builder: (context, constrains) {
+            return Column(
+              children: [
+                const Text("No Expenses yet!"),
+                Container(
+                    margin: const EdgeInsets.all(10),
+                    height: constrains.maxHeight * .8,
+                    width: constrains.maxWidth * .8,
+                    child: Image.asset('assets/images/s.jpg',
+                        fit: BoxFit.contain)),
+              ],
+            );
+          })
+        : ListView.builder(
+            itemCount: _transactions.length,
+            itemBuilder: (context, index) {
+              return Card(
+                elevation: 5,
+                child: Center(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      radius: 50,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: FittedBox(
+                          child: Text(
+                              '${_transactions[index].amount.toStringAsFixed(2)}\$'),
                         ),
                       ),
-                      title: Text(
-                        _transactions[index].title,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                          DateFormat.yMMMd().format(_transactions[index].date),
-                          style: const TextStyle(color: Colors.grey)),
-                      trailing: FloatingActionButton(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Theme.of(context).primaryColorDark,
-                          elevation: 0,
-                          onPressed: () => _removeItem(_transactions[index].id),
-                          child: Icon(Icons.delete)),
                     ),
+                    title: Text(
+                      _transactions[index].title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                        DateFormat.yMMMd().format(_transactions[index].date),
+                        style: const TextStyle(color: Colors.grey)),
+                    trailing: FloatingActionButton(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Theme.of(context).primaryColorDark,
+                        elevation: 0,
+                        onPressed: () => _removeItem(_transactions[index].id),
+                        child: Icon(Icons.delete)),
+                  ),
+                ),
+              );
+            },
+          );
 
-                    /*
+    /*
                     child: Container(
                       margin: EdgeInsets.all(15),
                       height: 80,
@@ -104,12 +113,8 @@ class ExpList extends StatelessWidget {
                       ),
                     ),
     */
-                  ),
-                );
-              },
-              itemCount: _transactions.length,
-            ),
-            /*     child: SingleChildScrollView(
+
+    /*     child: SingleChildScrollView(
         child: Column(
           children: _transactions
               .map((e) => Container(
@@ -172,6 +177,5 @@ class ExpList extends StatelessWidget {
         ),
       ),
       */
-          );
   }
 }
